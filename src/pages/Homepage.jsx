@@ -347,16 +347,46 @@ export default function Homepage() {
     setRsvpState(prev => ({ ...prev, [event.id]: 'loading' }))
     try {
       const { data: { user } } = await supabase.auth.getUser()
+      if (!user) { navigate('/login'); return }
+
+      // Check if already RSVP'd
+      const { data: existing } = await supabase
+        .from('rsvps')
+        .select('id')
+        .eq('event_id', event.id)
+        .eq('guest_id', user.id)
+        .single()
+
+      if (existing) {
+        setRsvpState(prev => ({ ...prev, [event.id]: 'done' }))
+        navigate('/tickets')
+        return
+      }
+
       const { data: newRsvp, error } = await supabase
         .from('rsvps')
         .insert([{ event_id: event.id, guest_id: user.id, status: 'accepted' }])
-        .select().single()
-      if (error) throw error
+        .select()
+        .single()
+
+      if (error) {
+        console.error('RSVP error:', error.message)
+        throw error
+      }
+
       setRsvpState(prev => ({ ...prev, [event.id]: 'done' }))
-      // notify Member 3's email system
-      const { notifyTicketCreated } = await import('../api/sendTicket')
-      await notifyTicketCreated({ rsvpId: newRsvp.id, guestEmail: user.email, eventTitle: event.title, eventDate: event.date })
-    } catch {
+
+      // Notify Member 3's email system (non-fatal)
+      try {
+        const { notifyTicketCreated } = await import('../api/sendTicket')
+        await notifyTicketCreated({ rsvpId: newRsvp.id, guestEmail: user.email, eventTitle: event.title, eventDate: event.date })
+      } catch { /* email failure doesn't block ticket */ }
+
+      // Go to tickets page after short delay
+      setTimeout(() => navigate('/tickets'), 800)
+
+    } catch (err) {
+      console.error('RSVP failed:', err)
       setRsvpState(prev => ({ ...prev, [event.id]: 'error' }))
     }
   }
