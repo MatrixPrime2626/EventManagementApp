@@ -138,19 +138,14 @@ export default function MyTickets() {
       const { data: { session } } = await supabase.auth.getSession()
       if (session) {
         setIsLoggedIn(true)
-        // Load tickets from localStorage for this user
         const key = `tickets_${session.user.id}`
         const stored = JSON.parse(localStorage.getItem(key) || '[]')
-        if (stored.length > 0) {
-          setTickets(stored)
-          setLoading(false)
-          return
-        }
-        setTickets([])
+        setTickets(stored)
         setLoading(false)
         return
       }
     } catch { }
+    // Not logged in — show mock tickets as demo
     setTickets(MOCK_TICKETS)
     setLoading(false)
   }
@@ -178,14 +173,16 @@ export default function MyTickets() {
           <p role="status" aria-live="polite" style={{ color: '#666' }}>Loading your tickets...</p>
         ) : tickets.length === 0 ? (
           <div style={{ color: '#666', textAlign: 'center', padding: '80px 0' }}>
-            <p style={{ fontSize: '1.1rem', marginBottom: '8px' }}>
-              {isLoggedIn ? "You haven't booked any events yet." : 'Sign in to see your tickets.'}
+            <p style={{ fontSize: '3rem', marginBottom: '16px' }}>🎫</p>
+            <p style={{ fontSize: '1.1rem', marginBottom: '8px', color: '#fff' }}>
+              {isLoggedIn ? "No tickets yet." : 'Sign in to see your tickets.'}
             </p>
-            <p style={{ fontSize: '0.85rem', marginBottom: '24px', color: '#444' }}>
-              {isLoggedIn ? 'Browse events and RSVP to get your first ticket.' : 'Create an account or log in to access your tickets.'}
+            <p style={{ fontSize: '0.85rem', marginBottom: '24px', color: '#555' }}>
+              {isLoggedIn ? 'Click "GET TICKET" on any event on the homepage.' : 'Create an account or log in to book events.'}
             </p>
-            <button style={navBtn} onClick={() => navigate(isLoggedIn ? '/' : '/login')}>
-              {isLoggedIn ? 'DISCOVER EVENTS' : 'LOG IN'}
+            <button style={{ ...navBtn, background: '#4361ee', color: '#fff', border: 'none' }}
+              onClick={() => window.location.href = isLoggedIn ? '/' : '/login'}>
+              {isLoggedIn ? 'BROWSE EVENTS →' : 'LOG IN'}
             </button>
           </div>
         ) : (

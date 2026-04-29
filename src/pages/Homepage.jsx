@@ -355,7 +355,7 @@ export default function Homepage() {
       // Already booked
       if (existing.find(t => t.event_id === event.id)) {
         setRsvpState(prev => ({ ...prev, [event.id]: 'done' }))
-        setTimeout(() => navigate('/tickets'), 500)
+        window.location.href = '/tickets'
         return
       }
 
@@ -386,7 +386,8 @@ export default function Homepage() {
         await notifyTicketCreated({ rsvpId: ticketCode, guestEmail: user.email, eventTitle: event.title, eventDate: event.date })
       } catch { }
 
-      setTimeout(() => navigate('/tickets'), 800)
+      // Redirect to tickets page
+      window.location.href = '/tickets'
 
     } catch (err) {
       console.error('RSVP failed:', err)
