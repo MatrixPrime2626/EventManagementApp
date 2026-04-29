@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { supabase } from '../supabase.js/client'
+import { useNavigate } from 'react-router'
+import { supabase } from '../supabaseClient'
 import Footer from '../components/Footer'
 
 const STATUS_LABELS = {

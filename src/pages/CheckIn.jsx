@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import { Html5QrcodeScanner } from 'html5-qrcode'
-import { supabase } from '../supabase.js/client'
+import { supabase } from '../supabaseClient'
 
 const MOCK_TICKETS = {
   'EVT-10324': { name: 'Alex Johnson', event: 'Your Best Recovery Yet', status: 'registered' },

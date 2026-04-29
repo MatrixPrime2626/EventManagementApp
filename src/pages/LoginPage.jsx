@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { supabase } from '../supabase.js/client'
+import { useNavigate } from 'react-router'
+import { supabase } from '../supabaseClient'
 
 export default function LoginPage() {
   const [mode, setMode] = useState('signup')
